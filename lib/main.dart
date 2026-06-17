@@ -15,6 +15,13 @@ class DebrideApp extends StatefulWidget {
 class _DebrideAppState extends State<DebrideApp> {
   bool _isDarkMode = false;
 
+  @override
+  void initState() {
+    super.initState();
+    final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+    _isDarkMode = brightness == Brightness.dark;
+  }
+
   void _toggleTheme() {
     setState(() {
       _isDarkMode = !_isDarkMode;
