@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../data/product.dart';
-import '../data/database_helper.dart';
+import '../data/repositories/product_repository.dart';
+import '../data/repositories/cart_repository.dart';
 import '../data/user.dart';
 import 'product_detail_screen.dart';
 
@@ -29,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadProducts() async {
-    final products = await DatabaseHelper.instance.getProducts();
+    final products = await ProductRepository().getAllProducts();
     setState(() {
       _products = products;
       _isLoading = false;
@@ -319,7 +320,7 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
-    await DatabaseHelper.instance.addToCart(
+    await CartRepository().addItem(
       widget.currentUser!.id!,
       product.id!,
       'Universel',

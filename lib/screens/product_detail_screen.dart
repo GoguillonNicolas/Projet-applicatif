@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/product.dart';
-import '../data/database_helper.dart';
+import '../data/repositories/cart_repository.dart';
 import '../data/user.dart';
 
 class ProductDetailScreen extends StatefulWidget {
@@ -272,7 +272,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       return;
     }
 
-    await DatabaseHelper.instance.addToCart(
+    await CartRepository().addItem(
       widget.currentUser!.id!,
       widget.product.id!,
       _selectedSide,

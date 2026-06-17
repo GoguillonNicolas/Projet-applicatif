@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../data/database_helper.dart';
+import '../data/repositories/cart_repository.dart';
 import '../data/user.dart';
 import 'home_screen.dart';
 import 'search_screen.dart';
@@ -38,7 +38,7 @@ class _MainNavigationState extends State<MainNavigation> {
       });
       return;
     }
-    final items = await DatabaseHelper.instance.getCartItems(_currentUser!.id!);
+    final items = await CartRepository().getCartForUser(_currentUser!.id!);
     int count = items.fold(0, (sum, item) => sum + item.quantity);
     setState(() {
       _cartCount = count;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../data/product.dart';
-import '../data/database_helper.dart';
+import '../data/repositories/product_repository.dart';
+import '../data/repositories/cart_repository.dart';
 import '../data/user.dart';
 import 'product_detail_screen.dart';
 
@@ -33,7 +34,7 @@ class _SearchScreenState extends State<SearchScreen> {
     setState(() {
       _isLoading = true;
     });
-    final products = await DatabaseHelper.instance.searchProducts(query);
+    final products = await ProductRepository().search(query);
     setState(() {
       _products = products;
       _isLoading = false;
@@ -286,7 +287,7 @@ class _SearchScreenState extends State<SearchScreen> {
       return;
     }
 
-    await DatabaseHelper.instance.addToCart(
+    await CartRepository().addItem(
       widget.currentUser!.id!,
       product.id!,
       'Universel',

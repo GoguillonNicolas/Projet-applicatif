@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../data/database_helper.dart';
+import '../data/repositories/user_repository.dart';
 import '../data/user.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -284,7 +284,7 @@ class _AccountScreenState extends State<AccountScreen> with SingleTickerProvider
       return;
     }
 
-    final user = await DatabaseHelper.instance.loginUser(email, password);
+    final user = await UserRepository().login(email, password);
     if (user != null) {
       widget.onUserChanged(user);
       _loginEmailController.clear();
@@ -310,7 +310,7 @@ class _AccountScreenState extends State<AccountScreen> with SingleTickerProvider
       return;
     }
 
-    final user = await DatabaseHelper.instance.registerUser(username, email, password);
+    final user = await UserRepository().register(username, email, password);
     if (user != null) {
       widget.onUserChanged(user);
       _registerUsernameController.clear();

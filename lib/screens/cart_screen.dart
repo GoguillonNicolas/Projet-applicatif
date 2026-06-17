@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/cart_item.dart';
-import '../data/database_helper.dart';
+import '../data/repositories/cart_repository.dart';
 import '../data/user.dart';
 
 class CartScreen extends StatefulWidget {
@@ -50,7 +50,7 @@ class _CartScreenState extends State<CartScreen> {
       _isLoading = true;
     });
 
-    final items = await DatabaseHelper.instance.getCartItems(widget.currentUser!.id!);
+    final items = await CartRepository().getCartForUser(widget.currentUser!.id!);
     setState(() {
       _cartItems = items;
       _isLoading = false;
@@ -314,19 +314,19 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Future<void> _updateQuantity(int cartId, int newQuantity) async {
-    await DatabaseHelper.instance.updateCartQuantity(cartId, newQuantity);
+    await CartRepository().updateQuantity(cartId, newQuantity);
     _loadCart();
     widget.onCartUpdated();
   }
 
   Future<void> _removeItem(int cartId) async {
-    await DatabaseHelper.instance.removeFromCart(cartId);
+    await CartRepository().removeItem(cartId);
     _loadCart();
     widget.onCartUpdated();
   }
 
   Future<void> _checkout() async {
-    await DatabaseHelper.instance.clearCart(widget.currentUser!.id!);
+    await CartRepository().clear(widget.currentUser!.id!);
     _loadCart();
     widget.onCartUpdated();
 
