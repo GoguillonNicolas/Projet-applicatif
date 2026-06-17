@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS products (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    category TEXT NOT NULL, 
+    category TEXT NOT NULL,
     price REAL NOT NULL,
     description TEXT,
     image_path TEXT
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS cart (
     user_id INTEGER NOT NULL,
     product_id INTEGER NOT NULL,
     quantity INTEGER DEFAULT 1,
-    side TEXT, 
+    side TEXT,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
