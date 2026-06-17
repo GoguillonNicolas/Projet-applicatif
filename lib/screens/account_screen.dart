@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import '../data/repositories/user_repository.dart';
-import '../data/user.dart';
+import '../logic/auth_controller.dart';
 
 class AccountScreen extends StatefulWidget {
-  final UserAccount? currentUser;
-  final Function(UserAccount?) onUserChanged;
+  final AuthController authController;
 
   const AccountScreen({
     super.key,
-    required this.currentUser,
-    required this.onUserChanged,
+    required this.authController,
   });
 
   @override
@@ -32,10 +29,12 @@ class _AccountScreenState extends State<AccountScreen> with SingleTickerProvider
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    widget.authController.addListener(_onAuthChanged);
   }
 
   @override
   void dispose() {
+    widget.authController.removeListener(_onAuthChanged);
     _tabController.dispose();
     _loginEmailController.dispose();
     _loginPasswordController.dispose();
@@ -45,14 +44,19 @@ class _AccountScreenState extends State<AccountScreen> with SingleTickerProvider
     super.dispose();
   }
 
+  void _onAuthChanged() {
+    if (mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: widget.currentUser != null ? _buildProfileView() : _buildAuthView(),
+      body: widget.authController.isAuthenticated ? _buildProfileView() : _buildAuthView(),
     );
   }
 
   Widget _buildProfileView() {
+    final user = widget.authController.currentUser!;
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -76,12 +80,12 @@ class _AccountScreenState extends State<AccountScreen> with SingleTickerProvider
 
             // User Info
             Text(
-              widget.currentUser!.username,
+              user.username,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF1E293B)),
             ),
             const SizedBox(height: 5),
             Text(
-              widget.currentUser!.email,
+              user.email,
               style: const TextStyle(fontSize: 16, color: Color(0xFF64748B)),
             ),
             const SizedBox(height: 40),
@@ -92,7 +96,7 @@ class _AccountScreenState extends State<AccountScreen> with SingleTickerProvider
               height: 50,
               child: OutlinedButton.icon(
                 onPressed: () {
-                  widget.onUserChanged(null);
+                  widget.authController.logout();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Déconnexion réussie !'),
@@ -284,14 +288,13 @@ class _AccountScreenState extends State<AccountScreen> with SingleTickerProvider
       return;
     }
 
-    final user = await UserRepository().login(email, password);
-    if (user != null) {
-      widget.onUserChanged(user);
+    final success = await widget.authController.login(email, password);
+    if (success) {
       _loginEmailController.clear();
       _loginPasswordController.clear();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Ravi de vous revoir, ${user.username} !'),
+          content: Text('Ravi de vous revoir, ${widget.authController.currentUser!.username} !'),
           backgroundColor: const Color(0xFFE58B24),
         ),
       );
@@ -310,15 +313,14 @@ class _AccountScreenState extends State<AccountScreen> with SingleTickerProvider
       return;
     }
 
-    final user = await UserRepository().register(username, email, password);
-    if (user != null) {
-      widget.onUserChanged(user);
+    final success = await widget.authController.register(username, email, password);
+    if (success) {
       _registerUsernameController.clear();
       _registerEmailController.clear();
       _registerPasswordController.clear();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Bienvenue chez Débridé, ${user.username} !'),
+          content: Text('Bienvenue chez Débridé, ${widget.authController.currentUser!.username} !'),
           backgroundColor: const Color(0xFFE58B24),
         ),
       );

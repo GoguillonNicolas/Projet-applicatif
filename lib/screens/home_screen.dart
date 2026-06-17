@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import '../data/product.dart';
 import '../data/repositories/product_repository.dart';
-import '../data/repositories/cart_repository.dart';
-import '../data/user.dart';
+import '../logic/auth_controller.dart';
+import '../logic/cart_controller.dart';
 import 'product_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  final UserAccount? currentUser;
-  final VoidCallback onCartUpdated;
+  final AuthController authController;
+  final CartController cartController;
 
   const HomeScreen({
     super.key,
-    required this.currentUser,
-    required this.onCartUpdated,
+    required this.authController,
+    required this.cartController,
   });
 
   @override
@@ -51,11 +51,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 15),
 
                   // Welcome message
-                  if (widget.currentUser != null)
+                  if (widget.authController.isAuthenticated)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 15),
                       child: Text(
-                        'Bonjour, ${widget.currentUser!.username} ! 👋',
+                        'Bonjour, ${widget.authController.currentUser!.username} ! 👋',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -302,15 +302,15 @@ class _HomeScreenState extends State<HomeScreen> {
       MaterialPageRoute(
         builder: (context) => ProductDetailScreen(
           product: product,
-          currentUser: widget.currentUser,
-          onCartUpdated: widget.onCartUpdated,
+          authController: widget.authController,
+          cartController: widget.cartController,
         ),
       ),
     );
   }
 
   Future<void> _quickAddToCart(BuildContext context, Product product) async {
-    if (widget.currentUser == null) {
+    if (!widget.authController.isAuthenticated) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Veuillez vous connecter pour ajouter des articles au panier.'),
@@ -320,21 +320,16 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
-    await CartRepository().addItem(
-      widget.currentUser!.id!,
-      product.id!,
-      'Universel',
-      1,
-    );
+    final success = await widget.cartController.addToCart(product, 'Universel', 1);
 
-    widget.onCartUpdated();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${product.name} ajouté au panier !'),
-        backgroundColor: const Color(0xFF264C72),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${product.name} ajouté au panier !'),
+          backgroundColor: const Color(0xFF264C72),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 }

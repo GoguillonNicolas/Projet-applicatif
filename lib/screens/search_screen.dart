@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import '../data/product.dart';
 import '../data/repositories/product_repository.dart';
-import '../data/repositories/cart_repository.dart';
-import '../data/user.dart';
+import '../logic/auth_controller.dart';
+import '../logic/cart_controller.dart';
 import 'product_detail_screen.dart';
 
 class SearchScreen extends StatefulWidget {
-  final UserAccount? currentUser;
-  final VoidCallback onCartUpdated;
+  final AuthController authController;
+  final CartController cartController;
 
   const SearchScreen({
     super.key,
-    required this.currentUser,
-    required this.onCartUpdated,
+    required this.authController,
+    required this.cartController,
   });
 
   @override
@@ -269,15 +269,15 @@ class _SearchScreenState extends State<SearchScreen> {
       MaterialPageRoute(
         builder: (context) => ProductDetailScreen(
           product: product,
-          currentUser: widget.currentUser,
-          onCartUpdated: widget.onCartUpdated,
+          authController: widget.authController,
+          cartController: widget.cartController,
         ),
       ),
     );
   }
 
   Future<void> _quickAddToCart(BuildContext context, Product product) async {
-    if (widget.currentUser == null) {
+    if (!widget.authController.isAuthenticated) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Veuillez vous connecter pour ajouter des articles au panier.'),
@@ -287,21 +287,16 @@ class _SearchScreenState extends State<SearchScreen> {
       return;
     }
 
-    await CartRepository().addItem(
-      widget.currentUser!.id!,
-      product.id!,
-      'Universel',
-      1,
-    );
+    final success = await widget.cartController.addToCart(product, 'Universel', 1);
 
-    widget.onCartUpdated();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${product.name} ajouté !'),
-        backgroundColor: const Color(0xFF264C72),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${product.name} ajouté !'),
+          backgroundColor: const Color(0xFF264C72),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 }

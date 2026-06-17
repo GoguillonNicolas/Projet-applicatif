@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import '../data/product.dart';
-import '../data/repositories/cart_repository.dart';
-import '../data/user.dart';
+import '../logic/auth_controller.dart';
+import '../logic/cart_controller.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
-  final UserAccount? currentUser;
-  final VoidCallback onCartUpdated;
+  final AuthController authController;
+  final CartController cartController;
 
   const ProductDetailScreen({
     super.key,
     required this.product,
-    required this.currentUser,
-    required this.onCartUpdated,
+    required this.authController,
+    required this.cartController,
   });
 
   @override
@@ -262,7 +262,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   Future<void> _addToCart(BuildContext context) async {
-    if (widget.currentUser == null) {
+    if (!widget.authController.isAuthenticated) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Veuillez vous connecter pour ajouter des articles au panier.'),
@@ -272,21 +272,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       return;
     }
 
-    await CartRepository().addItem(
-      widget.currentUser!.id!,
-      widget.product.id!,
+    final success = await widget.cartController.addToCart(
+      widget.product,
       _selectedSide,
       _quantity,
     );
 
-    widget.onCartUpdated();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${widget.product.name} ($_selectedSide) ajouté au panier !'),
-        backgroundColor: const Color(0xFF264C72),
-      ),
-    );
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${widget.product.name} ($_selectedSide) ajouté au panier !'),
+          backgroundColor: const Color(0xFF264C72),
+        ),
+      );
+    }
 
     Navigator.pop(context);
   }

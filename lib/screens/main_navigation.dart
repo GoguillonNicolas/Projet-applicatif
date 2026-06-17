@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../data/repositories/cart_repository.dart';
-import '../data/user.dart';
+import '../logic/auth_controller.dart';
+import '../logic/cart_controller.dart';
 import 'home_screen.dart';
 import 'search_screen.dart';
 import 'cart_screen.dart';
@@ -15,67 +15,54 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
   int _currentIndex = 0;
-  UserAccount? _currentUser;
-  int _cartCount = 0;
-  int _cartRefreshTrigger = 0;
-
-  // Clés globales pour pouvoir forcer le rafraîchissement des écrans
-  final GlobalKey<State> _cartScreenKey = GlobalKey<State>();
-  final GlobalKey<State> _homeScreenKey = GlobalKey<State>();
-  final GlobalKey<State> _searchScreenKey = GlobalKey<State>();
+  final AuthController _authController = AuthController();
+  final CartController _cartController = CartController();
 
   @override
   void initState() {
     super.initState();
-    _updateCartBadge();
+    _authController.addListener(_onAuthChanged);
+    _cartController.addListener(_onCartChanged);
   }
 
-  Future<void> _updateCartBadge() async {
-    if (_currentUser == null) {
-      setState(() {
-        _cartCount = 0;
-        _cartRefreshTrigger++;
-      });
-      return;
-    }
-    final items = await CartRepository().getCartForUser(_currentUser!.id!);
-    int count = items.fold(0, (sum, item) => sum + item.quantity);
-    setState(() {
-      _cartCount = count;
-      _cartRefreshTrigger++;
-    });
+  @override
+  void dispose() {
+    _authController.removeListener(_onAuthChanged);
+    _cartController.removeListener(_onCartChanged);
+    _authController.dispose();
+    _cartController.dispose();
+    super.dispose();
   }
 
-  void _onUserChanged(UserAccount? newUser) {
+  void _onAuthChanged() {
     setState(() {
-      _currentUser = newUser;
       _currentIndex = 0; // Redirige vers l'accueil à la connexion/déconnexion
     });
-    _updateCartBadge();
+    // Initialise le panier pour le nouvel utilisateur connecté
+    _cartController.initUserCart(_authController.currentUser?.id);
+  }
+
+  void _onCartChanged() {
+    setState(() {}); // Déclenche la mise à jour du badge du panier
   }
 
   @override
   Widget build(BuildContext context) {
     final List<Widget> screens = [
       HomeScreen(
-        key: _homeScreenKey,
-        currentUser: _currentUser,
-        onCartUpdated: _updateCartBadge,
+        authController: _authController,
+        cartController: _cartController,
       ),
       SearchScreen(
-        key: _searchScreenKey,
-        currentUser: _currentUser,
-        onCartUpdated: _updateCartBadge,
+        authController: _authController,
+        cartController: _cartController,
       ),
       CartScreen(
-        key: _cartScreenKey,
-        currentUser: _currentUser,
-        onCartUpdated: _updateCartBadge,
-        refreshTrigger: _cartRefreshTrigger,
+        authController: _authController,
+        cartController: _cartController,
       ),
       AccountScreen(
-        currentUser: _currentUser,
-        onUserChanged: _onUserChanged,
+        authController: _authController,
       ),
     ];
 
@@ -152,8 +139,7 @@ class _MainNavigationState extends State<MainNavigation> {
             setState(() {
               _currentIndex = index;
             });
-            // Met à jour le panier à chaque fois qu'on change d'onglet
-            _updateCartBadge();
+            _cartController.loadCart();
           },
           backgroundColor: Colors.white,
           selectedItemColor: const Color(0xFFE58B24),
@@ -175,7 +161,7 @@ class _MainNavigationState extends State<MainNavigation> {
                 alignment: Alignment.center,
                 children: [
                   const Icon(Icons.shopping_cart_outlined),
-                  if (_cartCount > 0)
+                  if (_cartController.totalItemsCount > 0)
                     Positioned(
                       right: 0,
                       top: 0,
@@ -190,7 +176,7 @@ class _MainNavigationState extends State<MainNavigation> {
                           minHeight: 14,
                         ),
                         child: Text(
-                          '$_cartCount',
+                          '${_cartController.totalItemsCount}',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 8,

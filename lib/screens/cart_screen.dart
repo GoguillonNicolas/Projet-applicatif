@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import '../data/cart_item.dart';
-import '../data/repositories/cart_repository.dart';
-import '../data/user.dart';
+import '../logic/auth_controller.dart';
+import '../logic/cart_controller.dart';
 
 class CartScreen extends StatefulWidget {
-  final UserAccount? currentUser;
-  final VoidCallback onCartUpdated;
-  final int refreshTrigger;
+  final AuthController authController;
+  final CartController cartController;
 
   const CartScreen({
     super.key,
-    required this.currentUser,
-    required this.onCartUpdated,
-    required this.refreshTrigger,
+    required this.authController,
+    required this.cartController,
   });
 
   @override
@@ -20,56 +18,34 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  List<CartItem> _cartItems = [];
-  bool _isLoading = true;
-
   @override
   void initState() {
     super.initState();
-    _loadCart();
+    widget.cartController.addListener(_onCartChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.cartController.removeListener(_onCartChanged);
+    super.dispose();
+  }
+
+  void _onCartChanged() {
+    if (mounted) setState(() {});
   }
 
   @override
   void didUpdateWidget(CartScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.refreshTrigger != widget.refreshTrigger || oldWidget.currentUser != widget.currentUser) {
-      _loadCart();
+    if (oldWidget.cartController != widget.cartController) {
+      oldWidget.cartController.removeListener(_onCartChanged);
+      widget.cartController.addListener(_onCartChanged);
     }
   }
-
-  Future<void> _loadCart() async {
-    if (widget.currentUser == null) {
-      setState(() {
-        _cartItems = [];
-        _isLoading = false;
-      });
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    final items = await CartRepository().getCartForUser(widget.currentUser!.id!);
-    setState(() {
-      _cartItems = items;
-      _isLoading = false;
-    });
-  }
-
-  double get _subtotal {
-    return _cartItems.fold(0.0, (sum, item) => sum + (item.product.price * item.quantity));
-  }
-
-  double get _shipping {
-    return _cartItems.isEmpty ? 0.0 : 4.99; // Frais fixes de livraison
-  }
-
-  double get _total => _subtotal + _shipping;
 
   @override
   Widget build(BuildContext context) {
-    if (widget.currentUser == null) {
+    if (!widget.authController.isAuthenticated) {
       return const Scaffold(
         body: Center(
           child: Padding(
@@ -96,10 +72,12 @@ class _CartScreenState extends State<CartScreen> {
       );
     }
 
+    final cartController = widget.cartController;
+
     return Scaffold(
-      body: _isLoading
+      body: cartController.isLoading
           ? const Center(child: CircularProgressIndicator(color: Color(0xFFE58B24)))
-          : _cartItems.isEmpty
+          : cartController.items.isEmpty
               ? const Center(
                   child: Padding(
                     padding: EdgeInsets.all(20),
@@ -127,9 +105,9 @@ class _CartScreenState extends State<CartScreen> {
                     Expanded(
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
-                        itemCount: _cartItems.length,
+                        itemCount: cartController.items.length,
                         itemBuilder: (context, index) {
-                          final item = _cartItems[index];
+                          final item = cartController.items[index];
                           return _buildCartItemCard(item);
                         },
                       ),
@@ -247,6 +225,8 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildSummaryCard() {
+    final cartController = widget.cartController;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -268,7 +248,7 @@ class _CartScreenState extends State<CartScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('Sous-total', style: TextStyle(color: Color(0xFF64748B))),
-                Text('${_subtotal.toStringAsFixed(2)} €', style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text('${cartController.subtotal.toStringAsFixed(2)} €', style: const TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
             const SizedBox(height: 8),
@@ -276,7 +256,7 @@ class _CartScreenState extends State<CartScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('Livraison (Frais fixes)', style: TextStyle(color: Color(0xFF64748B))),
-                Text('${_shipping.toStringAsFixed(2)} €', style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text('${cartController.shippingFee.toStringAsFixed(2)} €', style: const TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
             const Divider(height: 25, color: Color(0xFFE2E8F0)),
@@ -285,7 +265,7 @@ class _CartScreenState extends State<CartScreen> {
               children: [
                 const Text('Total', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF1E293B))),
                 Text(
-                  '${_total.toStringAsFixed(2)} €',
+                  '${cartController.total.toStringAsFixed(2)} €',
                   style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: Color(0xFF264C72)),
                 ),
               ],
@@ -314,21 +294,15 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Future<void> _updateQuantity(int cartId, int newQuantity) async {
-    await CartRepository().updateQuantity(cartId, newQuantity);
-    _loadCart();
-    widget.onCartUpdated();
+    await widget.cartController.updateQuantity(cartId, newQuantity);
   }
 
   Future<void> _removeItem(int cartId) async {
-    await CartRepository().removeItem(cartId);
-    _loadCart();
-    widget.onCartUpdated();
+    await widget.cartController.removeItem(cartId);
   }
 
   Future<void> _checkout() async {
-    await CartRepository().clear(widget.currentUser!.id!);
-    _loadCart();
-    widget.onCartUpdated();
+    await widget.cartController.clearCart();
 
     showDialog(
       context: context,
