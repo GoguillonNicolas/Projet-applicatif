@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'screens/main_navigation.dart';
 
 void main() {
@@ -46,6 +47,13 @@ class _DebrideAppState extends State<DebrideApp> {
           background: const Color(0xFFF5F7FA), // Fond doux gris/bleuté
         ),
         scaffoldBackgroundColor: const Color(0xFFF5F7FA),
+        appBarTheme: const AppBarTheme(
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+          ),
+        ),
         dividerColor: const Color(0xFFE2E8F0),
         textTheme: const TextTheme(
           titleLarge: TextStyle(
@@ -71,6 +79,13 @@ class _DebrideAppState extends State<DebrideApp> {
           background: const Color(0xFF0F172A), // Fond de page sombre slate
         ),
         scaffoldBackgroundColor: const Color(0xFF0F172A),
+        appBarTheme: const AppBarTheme(
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.light,
+            statusBarBrightness: Brightness.dark,
+          ),
+        ),
         dividerColor: const Color(0xFF334155),
         textTheme: const TextTheme(
           titleLarge: TextStyle(

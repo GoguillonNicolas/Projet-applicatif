@@ -137,19 +137,21 @@ class _AccountScreenState extends State<AccountScreen> with SingleTickerProvider
           // Tab Bar
           Container(
             height: 48,
+            padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.background : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(16),
             ),
             child: TabBar(
               controller: _tabController,
+              dividerColor: Colors.transparent,
               indicatorSize: TabBarIndicatorSize.tab,
               indicator: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.surface : Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withOpacity(0.08),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   )
