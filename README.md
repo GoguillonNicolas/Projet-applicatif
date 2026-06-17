@@ -15,9 +15,19 @@
 
 ## 🗺️ Navigation & Architecture
 
-- **Architecture** : Séparation propre des couches (Logic/UI, Repositories, Data sources).
-- Le schéma de navigation complet et la description fonctionnelle sont disponibles dans le fichier [user_flow.md](user_flow.md).
-- La structure de la base de données est définie dans le fichier [schema.sql](schema.sql).
+- **Structure du code** : séparation entre `lib/data` (modèles + accès aux données) et
+  `lib/screens` (UI). Voir [docs/diagrams/architecture.puml](docs/diagrams/architecture.puml)
+  pour le schéma des couches et leurs dépendances.
+- Le schéma de navigation complet est disponible dans [`User flow.png`](User%20flow.png)
+  (capture d'écran) et sa version diagramme source dans
+  [docs/diagrams/user_flow.puml](docs/diagrams/user_flow.puml).
+- La structure de la base de données est définie dans [schema.sql](schema.sql) et
+  schématisée dans [docs/diagrams/database_er.puml](docs/diagrams/database_er.puml).
+- La description fonctionnelle (contexte, utilisateurs, cas d'usage) est disponible dans
+  [docs/description_fonctionnelle.md](docs/description_fonctionnelle.md).
+- La justification des choix techniques (Flutter, sqflite, absence de state management
+  externe, etc.) est détaillée dans
+  [docs/justification_technique.md](docs/justification_technique.md).
 
 ---
 
