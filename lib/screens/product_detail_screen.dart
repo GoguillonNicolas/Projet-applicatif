@@ -1,0 +1,293 @@
+import 'package:flutter/material.dart';
+import '../data/product.dart';
+import '../data/database_helper.dart';
+import '../data/user.dart';
+
+class ProductDetailScreen extends StatefulWidget {
+  final Product product;
+  final UserAccount? currentUser;
+  final VoidCallback onCartUpdated;
+
+  const ProductDetailScreen({
+    super.key,
+    required this.product,
+    required this.currentUser,
+    required this.onCartUpdated,
+  });
+
+  @override
+  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+}
+
+class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  String _selectedSide = 'Universel';
+  int _quantity = 1;
+  final List<String> _sides = ['Universel', 'Gauche', 'Droite'];
+
+  @override
+  Widget build(BuildContext context) {
+    final cardColor = Color(widget.product.colorHex);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Détails de la bride'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: const Color(0xFF264C72),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Container Image
+            Container(
+              height: 250,
+              width: double.infinity,
+              color: cardColor.withOpacity(0.08),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(40),
+                  child: Hero(
+                    tag: 'product-${widget.product.id}',
+                    child: Image.asset(
+                      widget.product.imagePath,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Icon(
+                          Icons.broken_image_outlined,
+                          size: 80,
+                          color: cardColor.withOpacity(0.4),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Badges
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: cardColor.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          'BRIDE EN T',
+                          style: TextStyle(
+                            color: cardColor,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          const Icon(Icons.star, color: Colors.amber, size: 18),
+                          const SizedBox(width: 4),
+                          Text(
+                            widget.product.rating.toString(),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 15),
+
+                  // Title and Price
+                  Text(
+                    widget.product.name,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1A2D42),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${widget.product.price.toStringAsFixed(2)} €',
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFF264C72),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Description
+                  const Text(
+                    'Description',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Color(0xFF1A2D42),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    widget.product.description,
+                    style: const TextStyle(
+                      color: Color(0xFF64748B),
+                      height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+
+                  // Choix du Côté (Gauche / Droite / Universel)
+                  const Text(
+                    'Sélectionner le côté',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Color(0xFF1A2D42),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: _sides.map((side) {
+                      final isSelected = _selectedSide == side;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: ChoiceChip(
+                          label: Text(side),
+                          selected: isSelected,
+                          selectedColor: const Color(0xFF264C72),
+                          backgroundColor: Colors.white,
+                          labelStyle: TextStyle(
+                            color: isSelected ? Colors.white : const Color(0xFF264C72),
+                            fontWeight: FontWeight.bold,
+                          ),
+                          onSelected: (selected) {
+                            if (selected) {
+                              setState(() {
+                                _selectedSide = side;
+                              });
+                            }
+                          },
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 25),
+
+                  // Quantité
+                  Row(
+                    children: [
+                      const Text(
+                        'Quantité',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Color(0xFF1A2D42),
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                        ),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.remove, size: 20),
+                              onPressed: () {
+                                if (_quantity > 1) {
+                                  setState(() {
+                                    _quantity--;
+                                  });
+                                }
+                              },
+                            ),
+                            Text(
+                              '$_quantity',
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.add, size: 20),
+                              onPressed: () {
+                                setState(() {
+                                  _quantity++;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 40),
+
+                  // Ajouter au panier
+                  SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: ElevatedButton(
+                      onPressed: () => _addToCart(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFE58B24),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: const Text(
+                        'Ajouter au panier',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _addToCart(BuildContext context) async {
+    if (widget.currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Veuillez vous connecter pour ajouter des articles au panier.'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    await DatabaseHelper.instance.addToCart(
+      widget.currentUser!.id!,
+      widget.product.id!,
+      _selectedSide,
+      _quantity,
+    );
+
+    widget.onCartUpdated();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${widget.product.name} ($_selectedSide) ajouté au panier !'),
+        backgroundColor: const Color(0xFF264C72),
+      ),
+    );
+
+    Navigator.pop(context);
+  }
+}
