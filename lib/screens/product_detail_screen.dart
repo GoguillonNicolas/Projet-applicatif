@@ -43,24 +43,24 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             Container(
               height: 250,
               width: double.infinity,
-              color: cardColor.withOpacity(0.08),
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(40),
-                  child: Hero(
-                    tag: 'product-${widget.product.id}',
-                    child: Image.asset(
-                      widget.product.imagePath,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Icon(
+              color: Colors.white,
+              child: Hero(
+                tag: 'product-${widget.product.id}',
+                child: Image.asset(
+                  widget.product.imagePath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: cardColor.withOpacity(0.08),
+                      child: Center(
+                        child: Icon(
                           Icons.broken_image_outlined,
                           size: 80,
                           color: cardColor.withOpacity(0.4),
-                        );
-                      },
-                    ),
-                  ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),

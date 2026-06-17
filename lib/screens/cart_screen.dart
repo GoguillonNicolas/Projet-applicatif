@@ -135,16 +135,18 @@ class _CartScreenState extends State<CartScreen> {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: cardColor.withOpacity(0.08),
               borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(10),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(14),
               child: Image.asset(
                 item.product.imagePath,
-                fit: BoxFit.contain,
+                fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
-                  return Icon(Icons.broken_image, color: cardColor.withOpacity(0.4));
+                  return Center(
+                    child: Icon(Icons.broken_image, color: cardColor.withOpacity(0.4)),
+                  );
                 },
               ),
             ),

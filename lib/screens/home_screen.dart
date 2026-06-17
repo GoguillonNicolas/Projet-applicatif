@@ -184,24 +184,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap: () => _navigateToDetails(context, product),
                   child: Container(
                     width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: cardColor.withOpacity(0.08),
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                     ),
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Image.asset(
-                          product.imagePath,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Icon(
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                      child: Image.asset(
+                        product.imagePath,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Center(
+                            child: Icon(
                               Icons.broken_image_outlined,
                               size: 40,
                               color: cardColor.withOpacity(0.4),
-                            );
-                          },
-                        ),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),

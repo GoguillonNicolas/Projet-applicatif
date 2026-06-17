@@ -19,11 +19,20 @@ class DatabaseHelper {
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
+    print("📂 SQLITE DB PATH: $path");
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _createDB,
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute('DROP TABLE IF EXISTS cart');
+          await db.execute('DROP TABLE IF EXISTS products');
+          await db.execute('DROP TABLE IF EXISTS users');
+          await _createDB(db, newVersion);
+        }
+      },
     );
   }
 
@@ -74,42 +83,42 @@ class DatabaseHelper {
         'category': 'laniere',
         'price': 1.99,
         'description': 'Le modèle de base en plastique noir ultra-résistant. Passe-partout, s\'adapte à toutes les semelles.',
-        'image_path': 'assets/images/logo.png',
+        'image_path': 'assets/images/black_strap.png',
       },
       {
         'name': 'La Lanière Orange Fluo',
         'category': 'laniere',
         'price': 2.99,
         'description': 'La couleur officielle Débridé ! Mandarine vibrante rétro-réfléchissante pour être vu de loin sur le sable.',
-        'image_path': 'assets/images/logo.png',
+        'image_path': 'assets/images/orange_strap.png',
       },
       {
         'name': 'La Bride Cuir Vegan',
         'category': 'laniere',
         'price': 6.99,
         'description': 'Finition cuir marron synthétique de haute qualité. Idéal pour donner un look chic et habillé à vos tongs abîmées.',
-        'image_path': 'assets/images/logo.png',
+        'image_path': 'assets/images/leather_strap.png',
       },
       {
         'name': 'La Bride Transparente Pailletée',
         'category': 'laniere',
         'price': 3.49,
         'description': 'Translucide avec des incrustations de paillettes argentées. Discrète mais avec ce petit côté festif.',
-        'image_path': 'assets/images/logo.png',
+        'image_path': 'assets/images/glitter_strap.png',
       },
       {
         'name': 'La Bride Carbone Aérodynamique',
         'category': 'laniere',
         'price': 8.99,
         'description': 'Look fibre de carbone brute. Légère, rigide et testée en soufflerie pour une vitesse de marche maximale.',
-        'image_path': 'assets/images/logo.png',
+        'image_path': 'assets/images/carbon_strap.png',
       },
       {
         'name': 'La Bride Vintage Tressée',
         'category': 'laniere',
         'price': 5.49,
         'description': 'Tressage coton bohème pour un confort optimal sans irritation. Le charme rétro absolu.',
-        'image_path': 'assets/images/logo.png',
+        'image_path': 'assets/images/braided_strap.png',
       },
     ];
 
