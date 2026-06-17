@@ -6,11 +6,13 @@ import '../data/user.dart';
 class CartScreen extends StatefulWidget {
   final UserAccount? currentUser;
   final VoidCallback onCartUpdated;
+  final int refreshTrigger;
 
   const CartScreen({
     super.key,
     required this.currentUser,
     required this.onCartUpdated,
+    required this.refreshTrigger,
   });
 
   @override
@@ -25,6 +27,14 @@ class _CartScreenState extends State<CartScreen> {
   void initState() {
     super.initState();
     _loadCart();
+  }
+
+  @override
+  void didUpdateWidget(CartScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.refreshTrigger != widget.refreshTrigger || oldWidget.currentUser != widget.currentUser) {
+      _loadCart();
+    }
   }
 
   Future<void> _loadCart() async {

@@ -17,6 +17,7 @@ class _MainNavigationState extends State<MainNavigation> {
   int _currentIndex = 0;
   UserAccount? _currentUser;
   int _cartCount = 0;
+  int _cartRefreshTrigger = 0;
 
   // Clés globales pour pouvoir forcer le rafraîchissement des écrans
   final GlobalKey<State> _cartScreenKey = GlobalKey<State>();
@@ -33,6 +34,7 @@ class _MainNavigationState extends State<MainNavigation> {
     if (_currentUser == null) {
       setState(() {
         _cartCount = 0;
+        _cartRefreshTrigger++;
       });
       return;
     }
@@ -40,6 +42,7 @@ class _MainNavigationState extends State<MainNavigation> {
     int count = items.fold(0, (sum, item) => sum + item.quantity);
     setState(() {
       _cartCount = count;
+      _cartRefreshTrigger++;
     });
   }
 
@@ -68,6 +71,7 @@ class _MainNavigationState extends State<MainNavigation> {
         key: _cartScreenKey,
         currentUser: _currentUser,
         onCartUpdated: _updateCartBadge,
+        refreshTrigger: _cartRefreshTrigger,
       ),
       AccountScreen(
         currentUser: _currentUser,

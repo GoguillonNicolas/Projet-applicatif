@@ -171,7 +171,16 @@ class DatabaseHelper {
   Future<List<CartItem>> getCartItems(int userId) async {
     final db = await instance.database;
     final result = await db.rawQuery('''
-      SELECT cart.id as cart_id, cart.quantity, cart.side, products.* 
+      SELECT 
+        cart.id as cart_id, 
+        cart.quantity as cart_quantity, 
+        cart.side as cart_side, 
+        products.id as product_id,
+        products.name as product_name,
+        products.category as product_category,
+        products.price as product_price,
+        products.description as product_description,
+        products.image_path as product_image_path
       FROM cart 
       INNER JOIN products ON cart.product_id = products.id 
       WHERE cart.user_id = ?
@@ -179,18 +188,23 @@ class DatabaseHelper {
 
     return result.map((map) {
       final productMap = {
-        'id': map['id'],
-        'name': map['name'],
-        'category': map['category'],
-        'price': map['price'],
-        'description': map['description'],
-        'image_path': map['image_path'],
+        'id': map['product_id'],
+        'name': map['product_name'],
+        'category': map['product_category'],
+        'price': map['product_price'],
+        'description': map['product_description'],
+        'image_path': map['product_image_path'],
       };
+      
+      final cartId = map['cart_id'] != null ? int.tryParse(map['cart_id'].toString()) : null;
+      final quantity = map['cart_quantity'] != null ? int.tryParse(map['cart_quantity'].toString()) ?? 1 : 1;
+      final side = map['cart_side']?.toString() ?? 'Universel';
+
       return CartItem(
-        id: map['cart_id'] as int,
+        id: cartId,
         product: Product.fromMap(productMap),
-        quantity: map['quantity'] as int,
-        side: map['side'] as String,
+        quantity: quantity,
+        side: side,
       );
     }).toList();
   }
@@ -206,7 +220,7 @@ class DatabaseHelper {
     );
 
     if (existing.isNotEmpty) {
-      final currentQuantity = existing.first['quantity'] as int;
+      final currentQuantity = int.tryParse(existing.first['quantity'].toString()) ?? 1;
       await db.update(
         'cart',
         {'quantity': currentQuantity + quantity},
