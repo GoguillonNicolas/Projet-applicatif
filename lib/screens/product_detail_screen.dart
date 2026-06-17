@@ -33,7 +33,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         title: const Text('Détails de la bride'),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        foregroundColor: const Color(0xFF264C72),
+        foregroundColor: Theme.of(context).colorScheme.secondary,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -109,49 +109,49 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   // Title and Price
                   Text(
                     widget.product.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF1A2D42),
+                      color: Theme.of(context).colorScheme.onBackground,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     '${widget.product.price.toStringAsFixed(2)} €',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
-                      color: Color(0xFF264C72),
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                   const SizedBox(height: 20),
 
                   // Description
-                  const Text(
+                  Text(
                     'Description',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
-                      color: Color(0xFF1A2D42),
+                      color: Theme.of(context).colorScheme.onBackground,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     widget.product.description,
-                    style: const TextStyle(
-                      color: Color(0xFF64748B),
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
                       height: 1.5,
                     ),
                   ),
                   const SizedBox(height: 25),
 
                   // Choix du Côté (Gauche / Droite / Universel)
-                  const Text(
+                  Text(
                     'Sélectionner le côté',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
-                      color: Color(0xFF1A2D42),
+                      color: Theme.of(context).colorScheme.onBackground,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -163,10 +163,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         child: ChoiceChip(
                           label: Text(side),
                           selected: isSelected,
-                          selectedColor: const Color(0xFF264C72),
-                          backgroundColor: Colors.white,
+                          selectedColor: Theme.of(context).colorScheme.secondary,
+                          backgroundColor: Theme.of(context).colorScheme.surface,
                           labelStyle: TextStyle(
-                            color: isSelected ? Colors.white : const Color(0xFF264C72),
+                            color: isSelected ? Colors.white : Theme.of(context).colorScheme.secondary,
                             fontWeight: FontWeight.bold,
                           ),
                           onSelected: (selected) {
@@ -185,20 +185,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   // Quantité
                   Row(
                     children: [
-                      const Text(
+                      Text(
                         'Quantité',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
-                          color: Color(0xFF1A2D42),
+                          color: Theme.of(context).colorScheme.onBackground,
                         ),
                       ),
                       const Spacer(),
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(15),
-                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                          border: Border.all(color: Theme.of(context).dividerColor),
                         ),
                         child: Row(
                           children: [
@@ -282,7 +282,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${widget.product.name} ($_selectedSide) ajouté au panier !'),
-          backgroundColor: const Color(0xFF264C72),
+          backgroundColor: Theme.of(context).colorScheme.secondary,
         ),
       );
     }

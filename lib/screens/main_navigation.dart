@@ -7,7 +7,14 @@ import 'cart_screen.dart';
 import 'account_screen.dart';
 
 class MainNavigation extends StatefulWidget {
-  const MainNavigation({super.key});
+  final bool isDarkMode;
+  final VoidCallback onThemeToggled;
+
+  const MainNavigation({
+    super.key,
+    required this.isDarkMode,
+    required this.onThemeToggled,
+  });
 
   @override
   State<MainNavigation> createState() => _MainNavigationState();
@@ -78,6 +85,16 @@ class _MainNavigationState extends State<MainNavigation> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(
+              widget.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+              color: const Color(0xFFE58B24),
+            ),
+            onPressed: widget.onThemeToggled,
+          ),
+          const SizedBox(width: 8),
+        ],
         title: _currentIndex == 0
             ? Row(
                 children: [
@@ -90,8 +107,8 @@ class _MainNavigationState extends State<MainNavigation> {
                   ),
                   const SizedBox(width: 10),
                   RichText(
-                    text: const TextSpan(
-                      style: TextStyle(
+                    text: TextSpan(
+                      style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
                         fontFamily: 'Montserrat',
@@ -99,9 +116,9 @@ class _MainNavigationState extends State<MainNavigation> {
                       children: [
                         TextSpan(
                           text: 'Dé',
-                          style: TextStyle(color: Color(0xFF264C72)),
+                          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
                         ),
-                        TextSpan(
+                        const TextSpan(
                           text: 'bridé',
                           style: TextStyle(color: Color(0xFFE58B24)),
                         ),
@@ -112,8 +129,8 @@ class _MainNavigationState extends State<MainNavigation> {
               )
             : Text(
                 titles[_currentIndex],
-                style: const TextStyle(
-                  color: Color(0xFF264C72),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.secondary,
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
                 ),
@@ -127,7 +144,7 @@ class _MainNavigationState extends State<MainNavigation> {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withOpacity(widget.isDarkMode ? 0.2 : 0.06),
               blurRadius: 10,
               offset: const Offset(0, -5),
             ),
@@ -141,7 +158,7 @@ class _MainNavigationState extends State<MainNavigation> {
             });
             _cartController.loadCart();
           },
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           selectedItemColor: const Color(0xFFE58B24),
           unselectedItemColor: const Color(0xFF94A3B8),
           showSelectedLabels: true,

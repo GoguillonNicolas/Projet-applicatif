@@ -81,12 +81,12 @@ class _AccountScreenState extends State<AccountScreen> with SingleTickerProvider
             // User Info
             Text(
               user.username,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF1E293B)),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onBackground),
             ),
             const SizedBox(height: 5),
             Text(
               user.email,
-              style: const TextStyle(fontSize: 16, color: Color(0xFF64748B)),
+              style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyMedium?.color),
             ),
             const SizedBox(height: 40),
 
@@ -127,9 +127,9 @@ class _AccountScreenState extends State<AccountScreen> with SingleTickerProvider
           const SizedBox(height: 10),
           const Icon(Icons.beach_access, size: 60, color: Color(0xFFE58B24)),
           const SizedBox(height: 10),
-          const Text(
+          Text(
             'Rejoignez la communauté Débridé',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E293B)),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onBackground),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
@@ -138,7 +138,7 @@ class _AccountScreenState extends State<AccountScreen> with SingleTickerProvider
           Container(
             height: 48,
             decoration: BoxDecoration(
-              color: const Color(0xFFF1F5F9),
+              color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.background : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(16),
             ),
             child: TabBar(
@@ -146,7 +146,7 @@ class _AccountScreenState extends State<AccountScreen> with SingleTickerProvider
               indicatorSize: TabBarIndicatorSize.tab,
               indicator: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                color: Colors.white,
+                color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.surface : Colors.white,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.05),
@@ -155,8 +155,8 @@ class _AccountScreenState extends State<AccountScreen> with SingleTickerProvider
                   )
                 ],
               ),
-              labelColor: const Color(0xFF264C72),
-              unselectedLabelColor: const Color(0xFF64748B),
+              labelColor: Theme.of(context).colorScheme.secondary,
+              unselectedLabelColor: Theme.of(context).textTheme.bodyMedium?.color,
               labelStyle: const TextStyle(fontWeight: FontWeight.bold),
               tabs: const [
                 Tab(text: 'Connexion'),
@@ -204,7 +204,7 @@ class _AccountScreenState extends State<AccountScreen> with SingleTickerProvider
             child: ElevatedButton(
               onPressed: _login,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFE58B24),
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 elevation: 0,
@@ -245,8 +245,8 @@ class _AccountScreenState extends State<AccountScreen> with SingleTickerProvider
             child: ElevatedButton(
               onPressed: _register,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF264C72),
-                foregroundColor: Colors.white,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                foregroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 elevation: 0,
               ),
@@ -261,20 +261,21 @@ class _AccountScreenState extends State<AccountScreen> with SingleTickerProvider
   InputDecoration _inputDecoration(String label, IconData icon) {
     return InputDecoration(
       labelText: label,
-      prefixIcon: Icon(icon, color: const Color(0xFF264C72)),
+      labelStyle: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color),
+      prefixIcon: Icon(icon, color: Theme.of(context).colorScheme.secondary),
       filled: true,
-      fillColor: Colors.white,
+      fillColor: Theme.of(context).colorScheme.surface,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+        borderSide: BorderSide(color: Theme.of(context).dividerColor),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+        borderSide: BorderSide(color: Theme.of(context).dividerColor),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: Color(0xFFE58B24), width: 1.5),
+        borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 1.5),
       ),
     );
   }

@@ -56,10 +56,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.only(bottom: 15),
                       child: Text(
                         'Bonjour, ${widget.authController.currentUser!.username} ! 👋',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF264C72),
+                          color: Theme.of(context).colorScheme.secondary,
                         ),
                       ),
                     ),
@@ -129,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Text(
                     'Les Brides Populaires',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: const Color(0xFF1A2D42),
+                          color: Theme.of(context).colorScheme.onBackground,
                           fontWeight: FontWeight.bold,
                         ),
                   ),
@@ -162,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final cardColor = Color(product.colorHex);
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -171,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
+        border: Border.all(color: Theme.of(context).dividerColor, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -220,10 +220,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(width: 4),
                         Text(
                           product.rating.toString(),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF1E293B),
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         )
                       ],
@@ -252,10 +252,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 4),
                 Text(
                   product.name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF1E293B),
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -266,10 +266,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Text(
                       '${product.price.toStringAsFixed(2)} €',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w900,
-                        color: Color(0xFF264C72),
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                     Container(

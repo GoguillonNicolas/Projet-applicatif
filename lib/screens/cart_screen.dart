@@ -78,22 +78,22 @@ class _CartScreenState extends State<CartScreen> {
       body: cartController.isLoading
           ? const Center(child: CircularProgressIndicator(color: Color(0xFFE58B24)))
           : cartController.items.isEmpty
-              ? const Center(
+              ? Center(
                   child: Padding(
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.remove_shopping_cart_outlined, size: 80, color: Color(0xFF94A3B8)),
-                        SizedBox(height: 15),
+                        Icon(Icons.remove_shopping_cart_outlined, size: 80, color: Theme.of(context).colorScheme.secondary.withOpacity(0.5)),
+                        const SizedBox(height: 15),
                         Text(
                           'Votre panier est vide',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E293B)),
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onBackground),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(
                           'Ajoutez quelques brides de rechange pour commencer à réparer.',
-                          style: TextStyle(color: Color(0xFF64748B)),
+                          style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color),
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -124,9 +124,9 @@ class _CartScreenState extends State<CartScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Row(
         children: [
@@ -136,7 +136,7 @@ class _CartScreenState extends State<CartScreen> {
             height: 80,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
+              border: Border.all(color: Theme.of(context).dividerColor, width: 1),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(14),
@@ -160,7 +160,7 @@ class _CartScreenState extends State<CartScreen> {
               children: [
                 Text(
                   item.product.name,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xFF1E293B)),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Theme.of(context).colorScheme.onSurface),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -172,7 +172,7 @@ class _CartScreenState extends State<CartScreen> {
                 const SizedBox(height: 8),
                 Text(
                   '${item.product.price.toStringAsFixed(2)} €',
-                  style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: Color(0xFF264C72)),
+                  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: Theme.of(context).colorScheme.secondary),
                 ),
               ],
             ),
@@ -193,10 +193,10 @@ class _CartScreenState extends State<CartScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF1F5F9),
+                        color: Theme.of(context).dividerColor,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.remove, size: 16, color: Color(0xFF64748B)),
+                      child: Icon(Icons.remove, size: 16, color: Theme.of(context).textTheme.bodyMedium?.color),
                     ),
                   ),
                   Padding(
@@ -211,10 +211,10 @@ class _CartScreenState extends State<CartScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF1F5F9),
+                        color: Theme.of(context).dividerColor,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.add, size: 16, color: Color(0xFF64748B)),
+                      child: Icon(Icons.add, size: 16, color: Theme.of(context).textTheme.bodyMedium?.color),
                     ),
                   ),
                 ],
@@ -232,7 +232,7 @@ class _CartScreenState extends State<CartScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
         boxShadow: [
           BoxShadow(
@@ -249,26 +249,26 @@ class _CartScreenState extends State<CartScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Sous-total', style: TextStyle(color: Color(0xFF64748B))),
-                Text('${cartController.subtotal.toStringAsFixed(2)} €', style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text('Sous-total', style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color)),
+                Text('${cartController.subtotal.toStringAsFixed(2)} €', style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
               ],
             ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Livraison (Frais fixes)', style: TextStyle(color: Color(0xFF64748B))),
-                Text('${cartController.shippingFee.toStringAsFixed(2)} €', style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text('Livraison (Frais fixes)', style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color)),
+                Text('${cartController.shippingFee.toStringAsFixed(2)} €', style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
               ],
             ),
-            const Divider(height: 25, color: Color(0xFFE2E8F0)),
+            Divider(height: 25, color: Theme.of(context).dividerColor),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Total', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF1E293B))),
+                Text('Total', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Theme.of(context).colorScheme.onSurface)),
                 Text(
                   '${cartController.total.toStringAsFixed(2)} €',
-                  style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: Color(0xFF264C72)),
+                  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: Theme.of(context).colorScheme.secondary),
                 ),
               ],
             ),

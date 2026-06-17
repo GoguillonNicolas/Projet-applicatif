@@ -56,10 +56,11 @@ class _SearchScreenState extends State<SearchScreen> {
               onChanged: _performSearch,
               decoration: InputDecoration(
                 hintText: 'Rechercher une bride en T...',
-                prefixIcon: const Icon(Icons.search, color: Color(0xFF264C72)),
+                hintStyle: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color),
+                prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear, color: Color(0xFF64748B)),
+                        icon: Icon(Icons.clear, color: Theme.of(context).textTheme.bodyMedium?.color),
                         onPressed: () {
                           _searchController.clear();
                           _performSearch('');
@@ -67,19 +68,19 @@ class _SearchScreenState extends State<SearchScreen> {
                       )
                     : null,
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: Theme.of(context).colorScheme.surface,
                 contentPadding: const EdgeInsets.symmetric(vertical: 15),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                  borderSide: BorderSide(color: Theme.of(context).dividerColor),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                  borderSide: BorderSide(color: Theme.of(context).dividerColor),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(color: Color(0xFF264C72), width: 1.5),
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 1.5),
                 ),
               ),
             ),
@@ -132,7 +133,7 @@ class _SearchScreenState extends State<SearchScreen> {
     final cardColor = Color(product.colorHex);
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -141,7 +142,7 @@ class _SearchScreenState extends State<SearchScreen> {
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
+        border: Border.all(color: Theme.of(context).dividerColor, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,7 +181,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -189,10 +190,10 @@ class _SearchScreenState extends State<SearchScreen> {
                         const SizedBox(width: 4),
                         Text(
                           product.rating.toString(),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF1E293B),
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         )
                       ],
@@ -219,10 +220,10 @@ class _SearchScreenState extends State<SearchScreen> {
                 const SizedBox(height: 4),
                 Text(
                   product.name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF1E293B),
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -233,10 +234,10 @@ class _SearchScreenState extends State<SearchScreen> {
                   children: [
                     Text(
                       '${product.price.toStringAsFixed(2)} €',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w900,
-                        color: Color(0xFF264C72),
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                     Container(
